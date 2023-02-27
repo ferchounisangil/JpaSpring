@@ -9,6 +9,7 @@ public class Product {
 	private int stock;
 	private String active;
 	private Category category;
+	
 	public int getProductId() {
 		return productId;
 	}
