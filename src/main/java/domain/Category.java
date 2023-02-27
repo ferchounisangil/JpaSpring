@@ -5,6 +5,7 @@ public class Category {
 	private int categoryId;
 	private String category;
 	private String active;
+	
 	public int getCategoryId() {
 		return categoryId;
 	}
