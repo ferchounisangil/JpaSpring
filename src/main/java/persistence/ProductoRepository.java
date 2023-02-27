@@ -18,11 +18,6 @@ public class ProductoRepository implements ProductRepository{
 	private ProductoCrudRepository productoCrudRepository;
 	private ProductMapper mapper;
 	
-	
-	public List<Producto> getByCategoria(int idCategoria){
-		return productoCrudRepository.findByIdCategoria(idCategoria);
-	}
-	
 	public Optional<List<Producto>> getEscasos(int cantidad){
 		return productoCrudRepository.findByCantidadStockLessThanAndEstadoProducto(cantidad, "");
 	}
@@ -31,17 +26,6 @@ public class ProductoRepository implements ProductRepository{
 		return productoCrudRepository.findByCodigoBarras(codigoBarras);
 	}
 	
-	public Optional<Producto> getProducto (int id){
-		return productoCrudRepository.findById(id);
-	}
-	
-	public Producto saveProducto(Producto producto) {
-		return productoCrudRepository.save(producto);
-	}
-	
-	public void deleteProducto(int id) {
-		productoCrudRepository.deleteById(id);
-	}
 
 	@Override
 	public List<Product> getAll() {
@@ -49,36 +33,44 @@ public class ProductoRepository implements ProductRepository{
 		List<Producto> producto = (List<Producto>) productoCrudRepository.findAll();
 		return mapper.toProducts(producto);
 	}
-
+		
 	@Override
-	public Optional<List<Producto>> getByCategory(int categoryId) {
-		// TODO Auto-generated method stub
-		return Optional.empty();
+	public Optional<List<Product>> getByCategory(int categoryId) {
+		
+		List<Producto> productos = productoCrudRepository.findByIdCategoria(categoryId);
+		return Optional.of(mapper.toProducts(productos));
 	}
 
 	@Override
-	public Optional<List<Producto>> getScarseProduct(int quantity) {
-		// TODO Auto-generated method stub
-		return Optional.empty();
-	}
-
-	@Override
-	public Optional<List<Product>> getProduct(int productId) {
-		// TODO Auto-generated method stub
-		return Optional.empty();
-	}
-
-	@Override
-	public Product save(int productId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void delete(int productId) {
-		// TODO Auto-generated method stub
+	public Optional<List<Product>> getScarseProduct(int quantity) {
+		
+		Optional<List<Producto>> productos = productoCrudRepository.findByCantidadStockLessThanAndEstadoProducto(quantity, null);
+		return productos.map(prods -> mapper.toProducts(prods));
 		
 	}
+
+	@Override
+	public Optional<Product> getProduct(int productId) {
+		return  productoCrudRepository.findById(productId).map(producto -> mapper.toProduct(producto));
+		
+	}
+
+	
+	@Override
+	public void delete(int productId) {
+		
+		productoCrudRepository.deleteById(productId);
+		
+	}
+
+	@Override
+	public Product save(Product product) {
+		
+		Producto producto = mapper.toProducto(product);
+		return mapper.toProduct(productoCrudRepository.save(producto));
+	}
+
+	
 
 
 }
